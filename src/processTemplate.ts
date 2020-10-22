@@ -503,10 +503,13 @@ const processCmd: CommandProcessor = async (
         let str = String(result);
         if (ctx.options.processLineBreaks) {
           const { literalXmlDelimiter } = ctx.options;
-          str = str.replace(
-            /\n/g,
-            `${literalXmlDelimiter}<w:br/>${literalXmlDelimiter}`
-          );
+          str = str
+            .split(/[\n\r]+/) // could use different split criteria here
+            .map(
+              para =>
+                `${literalXmlDelimiter}</w:t><w:br/>${literalXmlDelimiter}${para}${literalXmlDelimiter}<w:t>${literalXmlDelimiter}`
+            )
+            .join('');
         }
         return str;
       }
